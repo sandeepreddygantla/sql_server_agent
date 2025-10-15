@@ -53,6 +53,22 @@
         "documentation": {}
     },
     {
+        "label": "datetime",
+        "importPath": "datetime",
+        "description": "datetime",
+        "isExtraImport": true,
+        "detail": "datetime",
+        "documentation": {}
+    },
+    {
+        "label": "timedelta",
+        "importPath": "datetime",
+        "description": "datetime",
+        "isExtraImport": true,
+        "detail": "datetime",
+        "documentation": {}
+    },
+    {
         "label": "logger",
         "importPath": "agno.utils.log",
         "description": "agno.utils.log",
@@ -90,6 +106,14 @@
         "description": "agno.models.openai",
         "isExtraImport": true,
         "detail": "agno.models.openai",
+        "documentation": {}
+    },
+    {
+        "label": "AzureOpenAI",
+        "importPath": "agno.models.azure",
+        "description": "agno.models.azure",
+        "isExtraImport": true,
+        "detail": "agno.models.azure",
         "documentation": {}
     },
     {
@@ -239,11 +263,29 @@
         "documentation": {}
     },
     {
+        "label": "SQLAgentManager",
+        "kind": 6,
+        "importPath": "src.agent.sql_agent",
+        "description": "src.agent.sql_agent",
+        "peekOfCode": "class SQLAgentManager:\n    \"\"\"Manages SQL agent with automatic token refresh for Azure.\"\"\"\n    def __init__(self, db_url: str = None):\n        self.db_url = db_url\n        self.provider = os.getenv(\"MODEL_PROVIDER\", \"openai\").lower()\n        self.token_expiry = None\n        self.agent = None\n        self._create_agent()\n    def _create_agent(self):\n        \"\"\"Create or recreate the agent.\"\"\"",
+        "detail": "src.agent.sql_agent",
+        "documentation": {}
+    },
+    {
         "label": "get_access_token",
         "kind": 2,
         "importPath": "src.agent.sql_agent",
         "description": "src.agent.sql_agent",
-        "peekOfCode": "def get_access_token():\n    \"\"\"\n    Dummy function to maintain compatibility with existing code.\n    OpenAI API uses API key authentication, not tokens.\n    \"\"\"\n    return \"dummy_token_for_compatibility\"\naccess_token = get_access_token()\ndef sql_agent(db_url: str = None) -> Agent:\n    \"\"\"\n    Create SQL Server Analysis Agent (No Memory)",
+        "peekOfCode": "def get_access_token():\n    \"\"\"Get Azure AD access token using client credentials flow.\"\"\"\n    provider = os.getenv(\"MODEL_PROVIDER\", \"openai\").lower()\n    if provider != \"azure\":\n        return \"dummy_token_for_compatibility\"\n    auth = \"https://api.uhg.com/oauth2/token\"\n    scope = \"https://api.uhg.com/.default\"\n    grant_type = \"client_credentials\"\n    client_id = os.getenv(\"AZURE_CLIENT_ID\")\n    client_secret = os.getenv(\"AZURE_CLIENT_SECRET\")",
+        "detail": "src.agent.sql_agent",
+        "documentation": {}
+    },
+    {
+        "label": "get_model",
+        "kind": 2,
+        "importPath": "src.agent.sql_agent",
+        "description": "src.agent.sql_agent",
+        "peekOfCode": "def get_model():\n    \"\"\"\n    Get the AI model based on MODEL_PROVIDER environment variable.\n    Switch between providers by changing MODEL_PROVIDER in .env\n    \"\"\"\n    provider = os.getenv(\"MODEL_PROVIDER\", \"openai\").lower()\n    if provider == \"openai\":\n        api_key = os.getenv(\"OPENAI_API_KEY\")\n        if not api_key:\n            raise ValueError(\"OPENAI_API_KEY is required when MODEL_PROVIDER=openai\")",
         "detail": "src.agent.sql_agent",
         "documentation": {}
     },
@@ -252,7 +294,7 @@
         "kind": 2,
         "importPath": "src.agent.sql_agent",
         "description": "src.agent.sql_agent",
-        "peekOfCode": "def sql_agent(db_url: str = None) -> Agent:\n    \"\"\"\n    Create SQL Server Analysis Agent (No Memory)\n    Args:\n        db_url: SQLAlchemy database URL (e.g., \"mssql+pyodbc://...\")\n    Returns:\n        Configured Agno Agent with SQL Server tools\n    \"\"\"\n    if db_url is None:\n        from dotenv import load_dotenv",
+        "peekOfCode": "def sql_agent(db_url: str = None):\n    \"\"\"\n    Create SQL Server Analysis Agent with automatic token refresh.\n    Returns SQLAgentManager that handles token refresh automatically.\n    \"\"\"\n    return SQLAgentManager(db_url=db_url)\nif __name__ == \"__main__\":\n    agent = sql_agent()\n    agent.print_response(\"Show me all available tables in the database\", markdown=True)",
         "detail": "src.agent.sql_agent",
         "documentation": {}
     },
@@ -261,25 +303,7 @@
         "kind": 5,
         "importPath": "src.agent.sql_agent",
         "description": "src.agent.sql_agent",
-        "peekOfCode": "logger = logging.getLogger(__name__)\nopenai_api_key = os.getenv(\"OPENAI_API_KEY\")\nif not openai_api_key:\n    raise ValueError(\"Please set OPENAI_API_KEY environment variable\")\nproject_id = \"openai-meeting-processor\"  # Simple project ID for personal use\ntiktoken_cache_dir = os.path.abspath(\"tiktoken_cache\")\nos.environ[\"TIKTOKEN_CACHE_DIR\"] = tiktoken_cache_dir\n# --- Dummy Auth Function (for compatibility) ---\ndef get_access_token():\n    \"\"\"",
-        "detail": "src.agent.sql_agent",
-        "documentation": {}
-    },
-    {
-        "label": "openai_api_key",
-        "kind": 5,
-        "importPath": "src.agent.sql_agent",
-        "description": "src.agent.sql_agent",
-        "peekOfCode": "openai_api_key = os.getenv(\"OPENAI_API_KEY\")\nif not openai_api_key:\n    raise ValueError(\"Please set OPENAI_API_KEY environment variable\")\nproject_id = \"openai-meeting-processor\"  # Simple project ID for personal use\ntiktoken_cache_dir = os.path.abspath(\"tiktoken_cache\")\nos.environ[\"TIKTOKEN_CACHE_DIR\"] = tiktoken_cache_dir\n# --- Dummy Auth Function (for compatibility) ---\ndef get_access_token():\n    \"\"\"\n    Dummy function to maintain compatibility with existing code.",
-        "detail": "src.agent.sql_agent",
-        "documentation": {}
-    },
-    {
-        "label": "project_id",
-        "kind": 5,
-        "importPath": "src.agent.sql_agent",
-        "description": "src.agent.sql_agent",
-        "peekOfCode": "project_id = \"openai-meeting-processor\"  # Simple project ID for personal use\ntiktoken_cache_dir = os.path.abspath(\"tiktoken_cache\")\nos.environ[\"TIKTOKEN_CACHE_DIR\"] = tiktoken_cache_dir\n# --- Dummy Auth Function (for compatibility) ---\ndef get_access_token():\n    \"\"\"\n    Dummy function to maintain compatibility with existing code.\n    OpenAI API uses API key authentication, not tokens.\n    \"\"\"\n    return \"dummy_token_for_compatibility\"",
+        "peekOfCode": "logger = logging.getLogger(__name__)\ntiktoken_cache_dir = os.path.abspath(\"tiktoken_cache\")\nos.environ[\"TIKTOKEN_CACHE_DIR\"] = tiktoken_cache_dir\ndef get_access_token():\n    \"\"\"Get Azure AD access token using client credentials flow.\"\"\"\n    provider = os.getenv(\"MODEL_PROVIDER\", \"openai\").lower()\n    if provider != \"azure\":\n        return \"dummy_token_for_compatibility\"\n    auth = \"https://api.uhg.com/oauth2/token\"\n    scope = \"https://api.uhg.com/.default\"",
         "detail": "src.agent.sql_agent",
         "documentation": {}
     },
@@ -288,7 +312,7 @@
         "kind": 5,
         "importPath": "src.agent.sql_agent",
         "description": "src.agent.sql_agent",
-        "peekOfCode": "tiktoken_cache_dir = os.path.abspath(\"tiktoken_cache\")\nos.environ[\"TIKTOKEN_CACHE_DIR\"] = tiktoken_cache_dir\n# --- Dummy Auth Function (for compatibility) ---\ndef get_access_token():\n    \"\"\"\n    Dummy function to maintain compatibility with existing code.\n    OpenAI API uses API key authentication, not tokens.\n    \"\"\"\n    return \"dummy_token_for_compatibility\"\naccess_token = get_access_token()",
+        "peekOfCode": "tiktoken_cache_dir = os.path.abspath(\"tiktoken_cache\")\nos.environ[\"TIKTOKEN_CACHE_DIR\"] = tiktoken_cache_dir\ndef get_access_token():\n    \"\"\"Get Azure AD access token using client credentials flow.\"\"\"\n    provider = os.getenv(\"MODEL_PROVIDER\", \"openai\").lower()\n    if provider != \"azure\":\n        return \"dummy_token_for_compatibility\"\n    auth = \"https://api.uhg.com/oauth2/token\"\n    scope = \"https://api.uhg.com/.default\"\n    grant_type = \"client_credentials\"",
         "detail": "src.agent.sql_agent",
         "documentation": {}
     },
@@ -297,16 +321,7 @@
         "kind": 5,
         "importPath": "src.agent.sql_agent",
         "description": "src.agent.sql_agent",
-        "peekOfCode": "os.environ[\"TIKTOKEN_CACHE_DIR\"] = tiktoken_cache_dir\n# --- Dummy Auth Function (for compatibility) ---\ndef get_access_token():\n    \"\"\"\n    Dummy function to maintain compatibility with existing code.\n    OpenAI API uses API key authentication, not tokens.\n    \"\"\"\n    return \"dummy_token_for_compatibility\"\naccess_token = get_access_token()\ndef sql_agent(db_url: str = None) -> Agent:",
-        "detail": "src.agent.sql_agent",
-        "documentation": {}
-    },
-    {
-        "label": "access_token",
-        "kind": 5,
-        "importPath": "src.agent.sql_agent",
-        "description": "src.agent.sql_agent",
-        "peekOfCode": "access_token = get_access_token()\ndef sql_agent(db_url: str = None) -> Agent:\n    \"\"\"\n    Create SQL Server Analysis Agent (No Memory)\n    Args:\n        db_url: SQLAlchemy database URL (e.g., \"mssql+pyodbc://...\")\n    Returns:\n        Configured Agno Agent with SQL Server tools\n    \"\"\"\n    if db_url is None:",
+        "peekOfCode": "os.environ[\"TIKTOKEN_CACHE_DIR\"] = tiktoken_cache_dir\ndef get_access_token():\n    \"\"\"Get Azure AD access token using client credentials flow.\"\"\"\n    provider = os.getenv(\"MODEL_PROVIDER\", \"openai\").lower()\n    if provider != \"azure\":\n        return \"dummy_token_for_compatibility\"\n    auth = \"https://api.uhg.com/oauth2/token\"\n    scope = \"https://api.uhg.com/.default\"\n    grant_type = \"client_credentials\"\n    client_id = os.getenv(\"AZURE_CLIENT_ID\")",
         "detail": "src.agent.sql_agent",
         "documentation": {}
     },
