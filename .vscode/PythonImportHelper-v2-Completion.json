@@ -1,0 +1,367 @@
+[
+    {
+        "label": "runpy",
+        "kind": 6,
+        "isExtraImport": true,
+        "importPath": "runpy",
+        "description": "runpy",
+        "detail": "runpy",
+        "documentation": {}
+    },
+    {
+        "label": "annotations",
+        "importPath": "__future__",
+        "description": "__future__",
+        "isExtraImport": true,
+        "detail": "__future__",
+        "documentation": {}
+    },
+    {
+        "label": "os",
+        "kind": 6,
+        "isExtraImport": true,
+        "importPath": "os",
+        "description": "os",
+        "detail": "os",
+        "documentation": {}
+    },
+    {
+        "label": "site",
+        "kind": 6,
+        "isExtraImport": true,
+        "importPath": "site",
+        "description": "site",
+        "detail": "site",
+        "documentation": {}
+    },
+    {
+        "label": "sys",
+        "kind": 6,
+        "isExtraImport": true,
+        "importPath": "sys",
+        "description": "sys",
+        "detail": "sys",
+        "documentation": {}
+    },
+    {
+        "label": "logging",
+        "kind": 6,
+        "isExtraImport": true,
+        "importPath": "logging",
+        "description": "logging",
+        "detail": "logging",
+        "documentation": {}
+    },
+    {
+        "label": "logger",
+        "importPath": "agno.utils.log",
+        "description": "agno.utils.log",
+        "isExtraImport": true,
+        "detail": "agno.utils.log",
+        "documentation": {}
+    },
+    {
+        "label": "logger",
+        "importPath": "agno.utils.log",
+        "description": "agno.utils.log",
+        "isExtraImport": true,
+        "detail": "agno.utils.log",
+        "documentation": {}
+    },
+    {
+        "label": "Agent",
+        "importPath": "agno.agent",
+        "description": "agno.agent",
+        "isExtraImport": true,
+        "detail": "agno.agent",
+        "documentation": {}
+    },
+    {
+        "label": "SQLTools",
+        "importPath": "agno.tools.sql",
+        "description": "agno.tools.sql",
+        "isExtraImport": true,
+        "detail": "agno.tools.sql",
+        "documentation": {}
+    },
+    {
+        "label": "OpenAIChat",
+        "importPath": "agno.models.openai",
+        "description": "agno.models.openai",
+        "isExtraImport": true,
+        "detail": "agno.models.openai",
+        "documentation": {}
+    },
+    {
+        "label": "httpx",
+        "kind": 6,
+        "isExtraImport": true,
+        "importPath": "httpx",
+        "description": "httpx",
+        "detail": "httpx",
+        "documentation": {}
+    },
+    {
+        "label": "load_dotenv",
+        "importPath": "dotenv",
+        "description": "dotenv",
+        "isExtraImport": true,
+        "detail": "dotenv",
+        "documentation": {}
+    },
+    {
+        "label": "FastAPI",
+        "importPath": "fastapi",
+        "description": "fastapi",
+        "isExtraImport": true,
+        "detail": "fastapi",
+        "documentation": {}
+    },
+    {
+        "label": "HTTPException",
+        "importPath": "fastapi",
+        "description": "fastapi",
+        "isExtraImport": true,
+        "detail": "fastapi",
+        "documentation": {}
+    },
+    {
+        "label": "BaseModel",
+        "importPath": "pydantic",
+        "description": "pydantic",
+        "isExtraImport": true,
+        "detail": "pydantic",
+        "documentation": {}
+    },
+    {
+        "label": "Optional",
+        "importPath": "typing",
+        "description": "typing",
+        "isExtraImport": true,
+        "detail": "typing",
+        "documentation": {}
+    },
+    {
+        "label": "sql_agent",
+        "importPath": "src.agent.sql_agent",
+        "description": "src.agent.sql_agent",
+        "isExtraImport": true,
+        "detail": "src.agent.sql_agent",
+        "documentation": {}
+    },
+    {
+        "label": "sql_agent",
+        "importPath": "src.agent.sql_agent",
+        "description": "src.agent.sql_agent",
+        "isExtraImport": true,
+        "detail": "src.agent.sql_agent",
+        "documentation": {}
+    },
+    {
+        "label": "bin_dir",
+        "kind": 5,
+        "importPath": ".venv.Scripts.activate_this",
+        "description": ".venv.Scripts.activate_this",
+        "peekOfCode": "bin_dir = os.path.dirname(abs_file)\nbase = bin_dir[: -len(\"Scripts\") - 1]  # strip away the bin part from the __file__, plus the path separator\n# prepend bin to PATH (this file is inside the bin directory)\nos.environ[\"PATH\"] = os.pathsep.join([bin_dir, *os.environ.get(\"PATH\", \"\").split(os.pathsep)])\nos.environ[\"VIRTUAL_ENV\"] = base  # virtual env is right above bin directory\nos.environ[\"VIRTUAL_ENV_PROMPT\"] = \"\" or os.path.basename(base)  # noqa: SIM222\n# add the virtual environments libraries to the host python import mechanism\nprev_length = len(sys.path)\nfor lib in \"..\\\\Lib\\\\site-packages\".split(os.pathsep):\n    path = os.path.realpath(os.path.join(bin_dir, lib))",
+        "detail": ".venv.Scripts.activate_this",
+        "documentation": {}
+    },
+    {
+        "label": "base",
+        "kind": 5,
+        "importPath": ".venv.Scripts.activate_this",
+        "description": ".venv.Scripts.activate_this",
+        "peekOfCode": "base = bin_dir[: -len(\"Scripts\") - 1]  # strip away the bin part from the __file__, plus the path separator\n# prepend bin to PATH (this file is inside the bin directory)\nos.environ[\"PATH\"] = os.pathsep.join([bin_dir, *os.environ.get(\"PATH\", \"\").split(os.pathsep)])\nos.environ[\"VIRTUAL_ENV\"] = base  # virtual env is right above bin directory\nos.environ[\"VIRTUAL_ENV_PROMPT\"] = \"\" or os.path.basename(base)  # noqa: SIM222\n# add the virtual environments libraries to the host python import mechanism\nprev_length = len(sys.path)\nfor lib in \"..\\\\Lib\\\\site-packages\".split(os.pathsep):\n    path = os.path.realpath(os.path.join(bin_dir, lib))\n    site.addsitedir(path)",
+        "detail": ".venv.Scripts.activate_this",
+        "documentation": {}
+    },
+    {
+        "label": "os.environ[\"PATH\"]",
+        "kind": 5,
+        "importPath": ".venv.Scripts.activate_this",
+        "description": ".venv.Scripts.activate_this",
+        "peekOfCode": "os.environ[\"PATH\"] = os.pathsep.join([bin_dir, *os.environ.get(\"PATH\", \"\").split(os.pathsep)])\nos.environ[\"VIRTUAL_ENV\"] = base  # virtual env is right above bin directory\nos.environ[\"VIRTUAL_ENV_PROMPT\"] = \"\" or os.path.basename(base)  # noqa: SIM222\n# add the virtual environments libraries to the host python import mechanism\nprev_length = len(sys.path)\nfor lib in \"..\\\\Lib\\\\site-packages\".split(os.pathsep):\n    path = os.path.realpath(os.path.join(bin_dir, lib))\n    site.addsitedir(path)\nsys.path[:] = sys.path[prev_length:] + sys.path[0:prev_length]\nsys.real_prefix = sys.prefix",
+        "detail": ".venv.Scripts.activate_this",
+        "documentation": {}
+    },
+    {
+        "label": "os.environ[\"VIRTUAL_ENV\"]",
+        "kind": 5,
+        "importPath": ".venv.Scripts.activate_this",
+        "description": ".venv.Scripts.activate_this",
+        "peekOfCode": "os.environ[\"VIRTUAL_ENV\"] = base  # virtual env is right above bin directory\nos.environ[\"VIRTUAL_ENV_PROMPT\"] = \"\" or os.path.basename(base)  # noqa: SIM222\n# add the virtual environments libraries to the host python import mechanism\nprev_length = len(sys.path)\nfor lib in \"..\\\\Lib\\\\site-packages\".split(os.pathsep):\n    path = os.path.realpath(os.path.join(bin_dir, lib))\n    site.addsitedir(path)\nsys.path[:] = sys.path[prev_length:] + sys.path[0:prev_length]\nsys.real_prefix = sys.prefix\nsys.prefix = base",
+        "detail": ".venv.Scripts.activate_this",
+        "documentation": {}
+    },
+    {
+        "label": "os.environ[\"VIRTUAL_ENV_PROMPT\"]",
+        "kind": 5,
+        "importPath": ".venv.Scripts.activate_this",
+        "description": ".venv.Scripts.activate_this",
+        "peekOfCode": "os.environ[\"VIRTUAL_ENV_PROMPT\"] = \"\" or os.path.basename(base)  # noqa: SIM222\n# add the virtual environments libraries to the host python import mechanism\nprev_length = len(sys.path)\nfor lib in \"..\\\\Lib\\\\site-packages\".split(os.pathsep):\n    path = os.path.realpath(os.path.join(bin_dir, lib))\n    site.addsitedir(path)\nsys.path[:] = sys.path[prev_length:] + sys.path[0:prev_length]\nsys.real_prefix = sys.prefix\nsys.prefix = base",
+        "detail": ".venv.Scripts.activate_this",
+        "documentation": {}
+    },
+    {
+        "label": "prev_length",
+        "kind": 5,
+        "importPath": ".venv.Scripts.activate_this",
+        "description": ".venv.Scripts.activate_this",
+        "peekOfCode": "prev_length = len(sys.path)\nfor lib in \"..\\\\Lib\\\\site-packages\".split(os.pathsep):\n    path = os.path.realpath(os.path.join(bin_dir, lib))\n    site.addsitedir(path)\nsys.path[:] = sys.path[prev_length:] + sys.path[0:prev_length]\nsys.real_prefix = sys.prefix\nsys.prefix = base",
+        "detail": ".venv.Scripts.activate_this",
+        "documentation": {}
+    },
+    {
+        "label": "sys.path[:]",
+        "kind": 5,
+        "importPath": ".venv.Scripts.activate_this",
+        "description": ".venv.Scripts.activate_this",
+        "peekOfCode": "sys.path[:] = sys.path[prev_length:] + sys.path[0:prev_length]\nsys.real_prefix = sys.prefix\nsys.prefix = base",
+        "detail": ".venv.Scripts.activate_this",
+        "documentation": {}
+    },
+    {
+        "label": "sys.real_prefix",
+        "kind": 5,
+        "importPath": ".venv.Scripts.activate_this",
+        "description": ".venv.Scripts.activate_this",
+        "peekOfCode": "sys.real_prefix = sys.prefix\nsys.prefix = base",
+        "detail": ".venv.Scripts.activate_this",
+        "documentation": {}
+    },
+    {
+        "label": "sys.prefix",
+        "kind": 5,
+        "importPath": ".venv.Scripts.activate_this",
+        "description": ".venv.Scripts.activate_this",
+        "peekOfCode": "sys.prefix = base",
+        "detail": ".venv.Scripts.activate_this",
+        "documentation": {}
+    },
+    {
+        "label": "get_access_token",
+        "kind": 2,
+        "importPath": "src.agent.sql_agent",
+        "description": "src.agent.sql_agent",
+        "peekOfCode": "def get_access_token():\n    \"\"\"\n    Dummy function to maintain compatibility with existing code.\n    OpenAI API uses API key authentication, not tokens.\n    \"\"\"\n    return \"dummy_token_for_compatibility\"\naccess_token = get_access_token()\ndef sql_agent(db_url: str = None) -> Agent:\n    \"\"\"\n    Create SQL Server Analysis Agent (No Memory)",
+        "detail": "src.agent.sql_agent",
+        "documentation": {}
+    },
+    {
+        "label": "sql_agent",
+        "kind": 2,
+        "importPath": "src.agent.sql_agent",
+        "description": "src.agent.sql_agent",
+        "peekOfCode": "def sql_agent(db_url: str = None) -> Agent:\n    \"\"\"\n    Create SQL Server Analysis Agent (No Memory)\n    Args:\n        db_url: SQLAlchemy database URL (e.g., \"mssql+pyodbc://...\")\n    Returns:\n        Configured Agno Agent with SQL Server tools\n    \"\"\"\n    if db_url is None:\n        from dotenv import load_dotenv",
+        "detail": "src.agent.sql_agent",
+        "documentation": {}
+    },
+    {
+        "label": "logger",
+        "kind": 5,
+        "importPath": "src.agent.sql_agent",
+        "description": "src.agent.sql_agent",
+        "peekOfCode": "logger = logging.getLogger(__name__)\nopenai_api_key = os.getenv(\"OPENAI_API_KEY\")\nif not openai_api_key:\n    raise ValueError(\"Please set OPENAI_API_KEY environment variable\")\nproject_id = \"openai-meeting-processor\"  # Simple project ID for personal use\ntiktoken_cache_dir = os.path.abspath(\"tiktoken_cache\")\nos.environ[\"TIKTOKEN_CACHE_DIR\"] = tiktoken_cache_dir\n# --- Dummy Auth Function (for compatibility) ---\ndef get_access_token():\n    \"\"\"",
+        "detail": "src.agent.sql_agent",
+        "documentation": {}
+    },
+    {
+        "label": "openai_api_key",
+        "kind": 5,
+        "importPath": "src.agent.sql_agent",
+        "description": "src.agent.sql_agent",
+        "peekOfCode": "openai_api_key = os.getenv(\"OPENAI_API_KEY\")\nif not openai_api_key:\n    raise ValueError(\"Please set OPENAI_API_KEY environment variable\")\nproject_id = \"openai-meeting-processor\"  # Simple project ID for personal use\ntiktoken_cache_dir = os.path.abspath(\"tiktoken_cache\")\nos.environ[\"TIKTOKEN_CACHE_DIR\"] = tiktoken_cache_dir\n# --- Dummy Auth Function (for compatibility) ---\ndef get_access_token():\n    \"\"\"\n    Dummy function to maintain compatibility with existing code.",
+        "detail": "src.agent.sql_agent",
+        "documentation": {}
+    },
+    {
+        "label": "project_id",
+        "kind": 5,
+        "importPath": "src.agent.sql_agent",
+        "description": "src.agent.sql_agent",
+        "peekOfCode": "project_id = \"openai-meeting-processor\"  # Simple project ID for personal use\ntiktoken_cache_dir = os.path.abspath(\"tiktoken_cache\")\nos.environ[\"TIKTOKEN_CACHE_DIR\"] = tiktoken_cache_dir\n# --- Dummy Auth Function (for compatibility) ---\ndef get_access_token():\n    \"\"\"\n    Dummy function to maintain compatibility with existing code.\n    OpenAI API uses API key authentication, not tokens.\n    \"\"\"\n    return \"dummy_token_for_compatibility\"",
+        "detail": "src.agent.sql_agent",
+        "documentation": {}
+    },
+    {
+        "label": "tiktoken_cache_dir",
+        "kind": 5,
+        "importPath": "src.agent.sql_agent",
+        "description": "src.agent.sql_agent",
+        "peekOfCode": "tiktoken_cache_dir = os.path.abspath(\"tiktoken_cache\")\nos.environ[\"TIKTOKEN_CACHE_DIR\"] = tiktoken_cache_dir\n# --- Dummy Auth Function (for compatibility) ---\ndef get_access_token():\n    \"\"\"\n    Dummy function to maintain compatibility with existing code.\n    OpenAI API uses API key authentication, not tokens.\n    \"\"\"\n    return \"dummy_token_for_compatibility\"\naccess_token = get_access_token()",
+        "detail": "src.agent.sql_agent",
+        "documentation": {}
+    },
+    {
+        "label": "os.environ[\"TIKTOKEN_CACHE_DIR\"]",
+        "kind": 5,
+        "importPath": "src.agent.sql_agent",
+        "description": "src.agent.sql_agent",
+        "peekOfCode": "os.environ[\"TIKTOKEN_CACHE_DIR\"] = tiktoken_cache_dir\n# --- Dummy Auth Function (for compatibility) ---\ndef get_access_token():\n    \"\"\"\n    Dummy function to maintain compatibility with existing code.\n    OpenAI API uses API key authentication, not tokens.\n    \"\"\"\n    return \"dummy_token_for_compatibility\"\naccess_token = get_access_token()\ndef sql_agent(db_url: str = None) -> Agent:",
+        "detail": "src.agent.sql_agent",
+        "documentation": {}
+    },
+    {
+        "label": "access_token",
+        "kind": 5,
+        "importPath": "src.agent.sql_agent",
+        "description": "src.agent.sql_agent",
+        "peekOfCode": "access_token = get_access_token()\ndef sql_agent(db_url: str = None) -> Agent:\n    \"\"\"\n    Create SQL Server Analysis Agent (No Memory)\n    Args:\n        db_url: SQLAlchemy database URL (e.g., \"mssql+pyodbc://...\")\n    Returns:\n        Configured Agno Agent with SQL Server tools\n    \"\"\"\n    if db_url is None:",
+        "detail": "src.agent.sql_agent",
+        "documentation": {}
+    },
+    {
+        "label": "QueryRequest",
+        "kind": 6,
+        "importPath": "src.mcp.server",
+        "description": "src.mcp.server",
+        "peekOfCode": "class QueryRequest(BaseModel):\n    query: str\nclass QueryResponse(BaseModel):\n    response: str\n# Initialize the SQL Server Agent\nsql_agent = sql_agent()\n# Create FastAPI app\napp = FastAPI(\n    title=\"SQL Server MCP\",\n    description=\"SQL Server analysis agent with natural language queries\",",
+        "detail": "src.mcp.server",
+        "documentation": {}
+    },
+    {
+        "label": "QueryResponse",
+        "kind": 6,
+        "importPath": "src.mcp.server",
+        "description": "src.mcp.server",
+        "peekOfCode": "class QueryResponse(BaseModel):\n    response: str\n# Initialize the SQL Server Agent\nsql_agent = sql_agent()\n# Create FastAPI app\napp = FastAPI(\n    title=\"SQL Server MCP\",\n    description=\"SQL Server analysis agent with natural language queries\",\n    version=\"1.0.0\"\n)",
+        "detail": "src.mcp.server",
+        "documentation": {}
+    },
+    {
+        "label": "sql_agent",
+        "kind": 5,
+        "importPath": "src.mcp.server",
+        "description": "src.mcp.server",
+        "peekOfCode": "sql_agent = sql_agent()\n# Create FastAPI app\napp = FastAPI(\n    title=\"SQL Server MCP\",\n    description=\"SQL Server analysis agent with natural language queries\",\n    version=\"1.0.0\"\n)\n@app.get(\"/\")\nasync def root():\n    \"\"\"Root endpoint with API information\"\"\"",
+        "detail": "src.mcp.server",
+        "documentation": {}
+    },
+    {
+        "label": "app",
+        "kind": 5,
+        "importPath": "src.mcp.server",
+        "description": "src.mcp.server",
+        "peekOfCode": "app = FastAPI(\n    title=\"SQL Server MCP\",\n    description=\"SQL Server analysis agent with natural language queries\",\n    version=\"1.0.0\"\n)\n@app.get(\"/\")\nasync def root():\n    \"\"\"Root endpoint with API information\"\"\"\n    return {\n        \"service\": \"SQL Server Analysis MCP\",",
+        "detail": "src.mcp.server",
+        "documentation": {}
+    },
+    {
+        "label": "main",
+        "kind": 2,
+        "importPath": "cli",
+        "description": "cli",
+        "peekOfCode": "def main():\n    # Create agent\n    agent = sql_agent()\n    print(\"=\" * 60)\n    print(\"SQL Server Agent Interactive CLI\")\n    print(\"=\" * 60)\n    print(\"\\nType 'exit' to quit\\n\")\n    while True:\n        # Get user input\n        query = input(\"You: \")",
+        "detail": "cli",
+        "documentation": {}
+    },
+    {
+        "label": "main",
+        "kind": 2,
+        "importPath": "main",
+        "description": "main",
+        "peekOfCode": "def main():\n    print(\"Hello from sql-server-agent!\")\nif __name__ == \"__main__\":\n    main()",
+        "detail": "main",
+        "documentation": {}
+    }
+]
