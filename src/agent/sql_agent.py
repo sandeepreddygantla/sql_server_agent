@@ -1,6 +1,7 @@
 import os
 import sys
 import logging
+from datetime import datetime, timedelta
 sys.path.append(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
 from agno.utils.log import logger
 from agno.agent import Agent
@@ -44,6 +45,25 @@ def get_access_token():
         return response.json()["access_token"]
 
 
+class AutoRefreshAzureOpenAI(AzureOpenAI):
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+        self.token_expiry = datetime.now() + timedelta(hours=1)
+        logger.info(f"Azure model created, token expires at {self.token_expiry.strftime('%H:%M:%S')}")
+
+    def _refresh_token_if_needed(self):
+        now = datetime.now()
+        if now >= self.token_expiry - timedelta(minutes=5):
+            logger.info("Token expiring soon, refreshing...")
+            self.azure_ad_token = get_access_token()
+            self.token_expiry = now + timedelta(hours=1)
+            logger.info(f"Token refreshed, expires at {self.token_expiry.strftime('%H:%M:%S')}")
+
+    def invoke(self, *args, **kwargs):
+        self._refresh_token_if_needed()
+        return super().invoke(*args, **kwargs)
+
+
 def get_model():
     """
     Get the AI model based on MODEL_PROVIDER environment variable.
@@ -66,7 +86,7 @@ def get_model():
         if not project_id:
             raise ValueError("AZURE_PROJECT_ID is required when MODEL_PROVIDER=azure")
 
-        return AzureOpenAI(
+        return AutoRefreshAzureOpenAI(
             id=os.getenv("AZURE_MODEL_ID", "gpt-4.1"),
             azure_deployment=os.getenv("AZURE_DEPLOYMENT", "gpt-4.1_2025-04-14"),
             api_version=os.getenv("AZURE_API_VERSION", "2025-01-01-preview"),

@@ -53,6 +53,22 @@
         "documentation": {}
     },
     {
+        "label": "datetime",
+        "importPath": "datetime",
+        "description": "datetime",
+        "isExtraImport": true,
+        "detail": "datetime",
+        "documentation": {}
+    },
+    {
+        "label": "timedelta",
+        "importPath": "datetime",
+        "description": "datetime",
+        "isExtraImport": true,
+        "detail": "datetime",
+        "documentation": {}
+    },
+    {
         "label": "logger",
         "importPath": "agno.utils.log",
         "description": "agno.utils.log",
@@ -220,6 +236,15 @@
         "description": ".venv.Scripts.activate_this",
         "peekOfCode": "sys.prefix = base",
         "detail": ".venv.Scripts.activate_this",
+        "documentation": {}
+    },
+    {
+        "label": "AutoRefreshAzureOpenAI",
+        "kind": 6,
+        "importPath": "src.agent.sql_agent",
+        "description": "src.agent.sql_agent",
+        "peekOfCode": "class AutoRefreshAzureOpenAI(AzureOpenAI):\n    def __init__(self, *args, **kwargs):\n        super().__init__(*args, **kwargs)\n        self.token_expiry = datetime.now() + timedelta(hours=1)\n        logger.info(f\"Azure model created, token expires at {self.token_expiry.strftime('%H:%M:%S')}\")\n    def _refresh_token_if_needed(self):\n        now = datetime.now()\n        if now >= self.token_expiry - timedelta(minutes=5):\n            logger.info(\"Token expiring soon, refreshing...\")\n            self.azure_ad_token = get_access_token()",
+        "detail": "src.agent.sql_agent",
         "documentation": {}
     },
     {

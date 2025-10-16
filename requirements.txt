@@ -1,4 +1,5 @@
 agno
+ag-ui-protocol
 pyodbc
 SQLAlchemy
 openai
