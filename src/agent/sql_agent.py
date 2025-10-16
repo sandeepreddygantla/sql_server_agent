@@ -1,13 +1,13 @@
 import os
 import sys
 import logging
-from datetime import datetime, timedelta
 sys.path.append(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
 from agno.utils.log import logger
 from agno.agent import Agent
 from agno.tools.sql import SQLTools
 from agno.models.openai import OpenAIChat
 from agno.models.azure import AzureOpenAI
+from agno.db.sqlite import SqliteDb
 import httpx
 from dotenv import load_dotenv
 
@@ -79,90 +79,67 @@ def get_model():
         raise ValueError(f"Unsupported MODEL_PROVIDER: {provider}. Supported: openai, azure")
 
 
-class SQLAgentManager:
-    """Manages SQL agent with automatic token refresh for Azure."""
+def _build_db_url(db_url=None):
+    """Build SQL Server connection string from environment variables."""
+    if db_url is not None:
+        return db_url
 
-    def __init__(self, db_url: str = None):
-        self.db_url = db_url
-        self.provider = os.getenv("MODEL_PROVIDER", "openai").lower()
-        self.token_expiry = None
-        self.agent = None
-        self._create_agent()
+    host = os.getenv("SQLSERVER_HOST")
+    database = os.getenv("SQLSERVER_DATABASE")
+    trusted = os.getenv("SQLSERVER_TRUSTED_CONNECTION", "yes")
 
-    def _create_agent(self):
-        """Create or recreate the agent."""
-        if self.db_url is None:
-            host = os.getenv("SQLSERVER_HOST")
-            database = os.getenv("SQLSERVER_DATABASE")
-            trusted = os.getenv("SQLSERVER_TRUSTED_CONNECTION", "yes")
-
-            if trusted.lower() == "yes":
-                db_url = f"mssql+pyodbc://{host}/{database}?driver=ODBC+Driver+17+for+SQL+Server&trusted_connection=yes"
-            else:
-                username = os.getenv("SQLSERVER_USERNAME")
-                password = os.getenv("SQLSERVER_PASSWORD")
-                db_url = f"mssql+pyodbc://{username}:{password}@{host}/{database}?driver=ODBC+Driver+17+for+SQL+Server"
-        else:
-            db_url = self.db_url
-
-        sql_tools = SQLTools(db_url=db_url)
-        model = get_model()
-
-        self.agent = Agent(
-            name="Assistant",
-            model=model,
-            tools=[sql_tools],
-            instructions=[
-                "You are an expert SQL Server database analyst.",
-                "Always explain your SQL queries before executing them.",
-                "For large datasets, use LIMIT or TOP clause to restrict results.",
-                "Provide clear insights and actionable recommendations.",
-                "Focus on read-only analysis – never suggest UPDATE, DELETE, or INSERT operations.",
-            ],
-            markdown=True,
-            stream=True
-        )
-
-        if self.provider == "azure":
-            self.token_expiry = datetime.now() + timedelta(hours=1)
-
-        logger.info(f"SQL Server Agent created with {self.provider} provider")
-
-    def _refresh_if_needed(self):
-        """Check token expiry and refresh if needed."""
-        if self.provider != "azure" or self.token_expiry is None:
-            return
-
-        if datetime.now() >= self.token_expiry - timedelta(minutes=5):
-            logger.info("Refreshing Azure access token...")
-            self._create_agent()
-            logger.info("Token refreshed successfully")
-
-    @property
-    def name(self):
-        """Get agent name."""
-        return self.agent.name
-
-    def print_response(self, message: str, **kwargs):
-        """Print agent response with automatic token refresh."""
-        self._refresh_if_needed()
-        return self.agent.print_response(message, **kwargs)
-
-    def run(self, message: str, **kwargs):
-        """Run agent with automatic token refresh."""
-        self._refresh_if_needed()
-        return self.agent.run(message, **kwargs)
+    if trusted.lower() == "yes":
+        return f"mssql+pyodbc://{host}/{database}?driver=ODBC+Driver+17+for+SQL+Server&trusted_connection=yes"
+    else:
+        username = os.getenv("SQLSERVER_USERNAME")
+        password = os.getenv("SQLSERVER_PASSWORD")
+        return f"mssql+pyodbc://{username}:{password}@{host}/{database}?driver=ODBC+Driver+17+for+SQL+Server"
 
 
-def sql_agent(db_url: str = None):
+def create_sql_agent(db_url=None):
     """
-    Create SQL Server Analysis Agent with automatic token refresh.
+    Create SQL Server Analysis Agent for AgentOS.
 
-    Returns SQLAgentManager that handles token refresh automatically.
+    This agent is created once at server startup and serves multiple users.
+    User ID and session ID are provided per request by AgentOS.
+
+    Note: For Azure deployments, the server should be restarted every ~55 minutes
+    to refresh expired tokens, or use OpenAI which has no token expiry.
+
+    Args:
+        db_url: Optional SQL Server database URL
+
+    Returns:
+        Configured Agent instance for AgentOS
     """
-    return SQLAgentManager(db_url=db_url)
+    db_url = _build_db_url(db_url)
+    sql_tools = SQLTools(db_url=db_url)
+    model = get_model()
+    session_db_file = os.getenv("SESSION_DB_FILE", "agno_sessions.db")
+    session_db = SqliteDb(db_file=session_db_file)
+
+    agent = Agent(
+        name="SQL Assistant",
+        model=model,
+        db=session_db,
+        add_history_to_context=True,
+        num_history_runs=10,
+        add_datetime_to_context=True,
+        tools=[sql_tools],
+        instructions=[
+            "You are an expert SQL Server database analyst.",
+            "Always explain your SQL queries before executing them.",
+            "For large datasets, use LIMIT or TOP clause to restrict results.",
+            "Provide clear insights and actionable recommendations.",
+            "Focus on read-only analysis – never suggest UPDATE, DELETE, or INSERT operations.",
+        ],
+        markdown=True,
+    )
+
+    logger.info(f"SQL Server Agent created for AgentOS with {os.getenv('MODEL_PROVIDER', 'openai')} provider")
+    return agent
 
 
 if __name__ == "__main__":
-    agent = sql_agent()
+    agent = create_sql_agent()
     agent.print_response("Show me all available tables in the database", markdown=True)

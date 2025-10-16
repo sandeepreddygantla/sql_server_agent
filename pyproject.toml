@@ -12,5 +12,6 @@ dependencies = [
     "pyodbc>=5.2.0",
     "python-dotenv>=1.1.1",
     "sqlalchemy>=2.0.44",
-    "uvicorn>=0.37.0",
+    "uvicorn[standard]>=0.37.0",
+    "websockets>=15.0.1",
 ]

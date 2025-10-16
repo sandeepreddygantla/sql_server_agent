@@ -3,6 +3,7 @@ pyodbc
 SQLAlchemy
 openai
 fastapi
-uvicorn
+uvicorn[standard]
+websockets
 pydantic
 python-dotenv

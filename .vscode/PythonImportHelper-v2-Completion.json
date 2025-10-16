@@ -53,30 +53,6 @@
         "documentation": {}
     },
     {
-        "label": "datetime",
-        "importPath": "datetime",
-        "description": "datetime",
-        "isExtraImport": true,
-        "detail": "datetime",
-        "documentation": {}
-    },
-    {
-        "label": "timedelta",
-        "importPath": "datetime",
-        "description": "datetime",
-        "isExtraImport": true,
-        "detail": "datetime",
-        "documentation": {}
-    },
-    {
-        "label": "logger",
-        "importPath": "agno.utils.log",
-        "description": "agno.utils.log",
-        "isExtraImport": true,
-        "detail": "agno.utils.log",
-        "documentation": {}
-    },
-    {
         "label": "logger",
         "importPath": "agno.utils.log",
         "description": "agno.utils.log",
@@ -117,6 +93,14 @@
         "documentation": {}
     },
     {
+        "label": "SqliteDb",
+        "importPath": "agno.db.sqlite",
+        "description": "agno.db.sqlite",
+        "isExtraImport": true,
+        "detail": "agno.db.sqlite",
+        "documentation": {}
+    },
+    {
         "label": "httpx",
         "kind": 6,
         "isExtraImport": true,
@@ -134,47 +118,23 @@
         "documentation": {}
     },
     {
-        "label": "FastAPI",
-        "importPath": "fastapi",
-        "description": "fastapi",
+        "label": "load_dotenv",
+        "importPath": "dotenv",
+        "description": "dotenv",
         "isExtraImport": true,
-        "detail": "fastapi",
+        "detail": "dotenv",
         "documentation": {}
     },
     {
-        "label": "HTTPException",
-        "importPath": "fastapi",
-        "description": "fastapi",
+        "label": "AgentOS",
+        "importPath": "agno.os",
+        "description": "agno.os",
         "isExtraImport": true,
-        "detail": "fastapi",
+        "detail": "agno.os",
         "documentation": {}
     },
     {
-        "label": "BaseModel",
-        "importPath": "pydantic",
-        "description": "pydantic",
-        "isExtraImport": true,
-        "detail": "pydantic",
-        "documentation": {}
-    },
-    {
-        "label": "Optional",
-        "importPath": "typing",
-        "description": "typing",
-        "isExtraImport": true,
-        "detail": "typing",
-        "documentation": {}
-    },
-    {
-        "label": "sql_agent",
-        "importPath": "src.agent.sql_agent",
-        "description": "src.agent.sql_agent",
-        "isExtraImport": true,
-        "detail": "src.agent.sql_agent",
-        "documentation": {}
-    },
-    {
-        "label": "sql_agent",
+        "label": "create_sql_agent",
         "importPath": "src.agent.sql_agent",
         "description": "src.agent.sql_agent",
         "isExtraImport": true,
@@ -263,15 +223,6 @@
         "documentation": {}
     },
     {
-        "label": "SQLAgentManager",
-        "kind": 6,
-        "importPath": "src.agent.sql_agent",
-        "description": "src.agent.sql_agent",
-        "peekOfCode": "class SQLAgentManager:\n    \"\"\"Manages SQL agent with automatic token refresh for Azure.\"\"\"\n    def __init__(self, db_url: str = None):\n        self.db_url = db_url\n        self.provider = os.getenv(\"MODEL_PROVIDER\", \"openai\").lower()\n        self.token_expiry = None\n        self.agent = None\n        self._create_agent()\n    def _create_agent(self):\n        \"\"\"Create or recreate the agent.\"\"\"",
-        "detail": "src.agent.sql_agent",
-        "documentation": {}
-    },
-    {
         "label": "get_access_token",
         "kind": 2,
         "importPath": "src.agent.sql_agent",
@@ -290,11 +241,11 @@
         "documentation": {}
     },
     {
-        "label": "sql_agent",
+        "label": "create_sql_agent",
         "kind": 2,
         "importPath": "src.agent.sql_agent",
         "description": "src.agent.sql_agent",
-        "peekOfCode": "def sql_agent(db_url: str = None):\n    \"\"\"\n    Create SQL Server Analysis Agent with automatic token refresh.\n    Returns SQLAgentManager that handles token refresh automatically.\n    \"\"\"\n    return SQLAgentManager(db_url=db_url)\nif __name__ == \"__main__\":\n    agent = sql_agent()\n    agent.print_response(\"Show me all available tables in the database\", markdown=True)",
+        "peekOfCode": "def create_sql_agent(db_url=None):\n    \"\"\"\n    Create SQL Server Analysis Agent for AgentOS.\n    This agent is created once at server startup and serves multiple users.\n    User ID and session ID are provided per request by AgentOS.\n    Note: For Azure deployments, the server should be restarted every ~55 minutes\n    to refresh expired tokens, or use OpenAI which has no token expiry.\n    Args:\n        db_url: Optional SQL Server database URL\n    Returns:",
         "detail": "src.agent.sql_agent",
         "documentation": {}
     },
@@ -326,57 +277,30 @@
         "documentation": {}
     },
     {
-        "label": "QueryRequest",
-        "kind": 6,
-        "importPath": "src.mcp.server",
-        "description": "src.mcp.server",
-        "peekOfCode": "class QueryRequest(BaseModel):\n    query: str\nclass QueryResponse(BaseModel):\n    response: str\n# Initialize the SQL Server Agent\nsql_agent = sql_agent()\n# Create FastAPI app\napp = FastAPI(\n    title=\"SQL Server MCP\",\n    description=\"SQL Server analysis agent with natural language queries\",",
-        "detail": "src.mcp.server",
-        "documentation": {}
-    },
-    {
-        "label": "QueryResponse",
-        "kind": 6,
-        "importPath": "src.mcp.server",
-        "description": "src.mcp.server",
-        "peekOfCode": "class QueryResponse(BaseModel):\n    response: str\n# Initialize the SQL Server Agent\nsql_agent = sql_agent()\n# Create FastAPI app\napp = FastAPI(\n    title=\"SQL Server MCP\",\n    description=\"SQL Server analysis agent with natural language queries\",\n    version=\"1.0.0\"\n)",
-        "detail": "src.mcp.server",
-        "documentation": {}
-    },
-    {
-        "label": "sql_agent",
+        "label": "sql_assistant",
         "kind": 5,
-        "importPath": "src.mcp.server",
-        "description": "src.mcp.server",
-        "peekOfCode": "sql_agent = sql_agent()\n# Create FastAPI app\napp = FastAPI(\n    title=\"SQL Server MCP\",\n    description=\"SQL Server analysis agent with natural language queries\",\n    version=\"1.0.0\"\n)\n@app.get(\"/\")\nasync def root():\n    \"\"\"Root endpoint with API information\"\"\"",
-        "detail": "src.mcp.server",
+        "importPath": "agent_os",
+        "description": "agent_os",
+        "peekOfCode": "sql_assistant = create_sql_agent()\nagent_os = AgentOS(\n    id=\"sql-server-agent-os\",\n    description=\"SQL Server analysis agent with natural language queries\",\n    agents=[sql_assistant],\n)\napp = agent_os.get_app()\nif __name__ == \"__main__\":\n    port = int(os.getenv(\"AGNO_OS_PORT\", 7777))\n    agent_os.serve(app=\"agent_os:app\", host=\"0.0.0.0\", port=port, reload=True)",
+        "detail": "agent_os",
+        "documentation": {}
+    },
+    {
+        "label": "agent_os",
+        "kind": 5,
+        "importPath": "agent_os",
+        "description": "agent_os",
+        "peekOfCode": "agent_os = AgentOS(\n    id=\"sql-server-agent-os\",\n    description=\"SQL Server analysis agent with natural language queries\",\n    agents=[sql_assistant],\n)\napp = agent_os.get_app()\nif __name__ == \"__main__\":\n    port = int(os.getenv(\"AGNO_OS_PORT\", 7777))\n    agent_os.serve(app=\"agent_os:app\", host=\"0.0.0.0\", port=port, reload=True)",
+        "detail": "agent_os",
         "documentation": {}
     },
     {
         "label": "app",
         "kind": 5,
-        "importPath": "src.mcp.server",
-        "description": "src.mcp.server",
-        "peekOfCode": "app = FastAPI(\n    title=\"SQL Server MCP\",\n    description=\"SQL Server analysis agent with natural language queries\",\n    version=\"1.0.0\"\n)\n@app.get(\"/\")\nasync def root():\n    \"\"\"Root endpoint with API information\"\"\"\n    return {\n        \"service\": \"SQL Server Analysis MCP\",",
-        "detail": "src.mcp.server",
-        "documentation": {}
-    },
-    {
-        "label": "main",
-        "kind": 2,
-        "importPath": "cli",
-        "description": "cli",
-        "peekOfCode": "def main():\n    # Create agent\n    agent = sql_agent()\n    print(\"=\" * 60)\n    print(\"SQL Server Agent Interactive CLI\")\n    print(\"=\" * 60)\n    print(\"\\nType 'exit' to quit\\n\")\n    while True:\n        # Get user input\n        query = input(\"You: \")",
-        "detail": "cli",
-        "documentation": {}
-    },
-    {
-        "label": "main",
-        "kind": 2,
-        "importPath": "main",
-        "description": "main",
-        "peekOfCode": "def main():\n    print(\"Hello from sql-server-agent!\")\nif __name__ == \"__main__\":\n    main()",
-        "detail": "main",
+        "importPath": "agent_os",
+        "description": "agent_os",
+        "peekOfCode": "app = agent_os.get_app()\nif __name__ == \"__main__\":\n    port = int(os.getenv(\"AGNO_OS_PORT\", 7777))\n    agent_os.serve(app=\"agent_os:app\", host=\"0.0.0.0\", port=port, reload=True)",
+        "detail": "agent_os",
         "documentation": {}
     }
 ]

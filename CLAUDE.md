@@ -6,9 +6,11 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 
 SQL Server Agent is a natural language interface for SQL Server database analysis. It uses the Agno framework to create an AI agent that can understand natural language queries and execute SQL operations on SQL Server databases.
 
-The project has two main interfaces:
-1. **CLI Mode** (`cli.py`): Interactive command-line interface for direct user queries
-2. **MCP Server** (`src/mcp/server.py`): FastAPI REST API server exposing agent functionality via HTTP endpoints
+**AgentOS** (`agent_os.py`) is the single interface:
+- Production-ready agent server with web UI and 50+ API endpoints
+- Handles multi-user sessions automatically
+- Web interface at `http://localhost:7777`
+- REST API with automatic documentation at `http://localhost:7777/docs`
 
 ## Code Modification Guidelines
 
@@ -27,22 +29,22 @@ The project has two main interfaces:
 ### Core Components
 
 **Agent Layer** (`src/agent/sql_agent.py`):
-- Creates an Agno Agent configured with SQLTools for database operations
+- Single function `create_sql_agent()` creates the Agno Agent
+- Configured with SQLTools for SQL Server database operations
 - Supports both OpenAI (for development) and Azure OpenAI (for production deployment)
 - Agent is read-only by design - instructions explicitly forbid UPDATE/DELETE/INSERT operations
-- Uses streaming responses by default for better UX
-- Constructs SQL Server connection strings from environment variables, supporting both Windows Authentication (trusted connection) and SQL Server Authentication
+- Constructs SQL Server connection strings from environment variables
+- Supports both Windows Authentication (trusted connection) and SQL Server Authentication
 
-**MCP Server** (`src/mcp/server.py`):
-- FastAPI application exposing `/query`, `/health`, and root endpoints
-- Initializes a single global `sql_agent` instance on startup
-- POST `/query` accepts `{"query": "natural language question"}` and returns agent response
-- Runs on port 8000 by default with auto-reload enabled
-
-**CLI Interface** (`cli.py`):
-- Simple REPL loop for interactive queries
-- Uses `agent.print_response()` with markdown formatting
-- Exit with 'exit', 'quit', or 'q'
+**AgentOS** (`agent_os.py`):
+- Production-ready Agno OS runtime serving the SQL agent
+- Provides 50+ built-in API endpoints for agent interaction, sessions, memories, knowledge
+- Web UI at `http://localhost:7777` for agent management and chat
+- Primary endpoint: `POST /agents/sql-assistant/runs` (form-encoded)
+- Automatic multi-user session management
+- Built-in monitoring, logging, and API documentation at `/docs`
+- Runs on port 7777 by default (configurable via `AGNO_OS_PORT`)
+- Optional bearer-token authentication via `OS_SECURITY_KEY` environment variable
 
 ### Environment Configuration
 
@@ -53,6 +55,9 @@ The agent reads configuration from `.env`:
 - `SQLSERVER_DATABASE`: Database name
 - `SQLSERVER_TRUSTED_CONNECTION`: Set to `yes` for Windows Auth, `no` for SQL Auth
 - `SQLSERVER_USERNAME`, `SQLSERVER_PASSWORD`: Required when using SQL Auth
+
+**Session Storage**:
+- `SESSION_DB_FILE`: SQLite database file for sessions (defaults to `agno_sessions.db`)
 
 **Model Provider**:
 - `MODEL_PROVIDER`: Set to `openai` or `azure` (defaults to `openai`)
@@ -70,6 +75,10 @@ The agent reads configuration from `.env`:
 - `AZURE_API_VERSION`: Optional (defaults to `2025-01-01-preview`)
 - `AZURE_ENDPOINT`: Optional (defaults to organization endpoint)
 
+**AgentOS Configuration**:
+- `AGNO_OS_PORT`: Port for AgentOS server (defaults to 7777)
+- `OS_SECURITY_KEY`: Optional bearer token for API authentication (auto-detected by AgentOS)
+
 ### Model Configuration Strategy
 
 The codebase uses environment-driven model configuration for easy switching:
@@ -82,7 +91,7 @@ The codebase uses environment-driven model configuration for easy switching:
 - Uses Azure OpenAI with AD token authentication
 - Azure AD token retrieved via OAuth2 client credentials flow
 - Requires `AZURE_CLIENT_ID`, `AZURE_CLIENT_SECRET`, `AZURE_PROJECT_ID`, etc.
-- Tokens automatically refresh every hour (before 5-minute expiry threshold)
+- **Token Limitation**: Azure tokens expire after 1 hour. AgentOS creates the agent once at startup, so for Azure deployments, restart the server every ~55 minutes or use OpenAI (no expiry).
 
 **Adding New Providers**: Update `get_model()` function in `sql_agent.py:47-79` to add support for other model providers
 
@@ -100,29 +109,27 @@ This project uses **uv** as the package manager, not pip.
 **Running Python files**:
 ```bash
 # Using uv run
-uv run cli.py
+uv run agent_os.py
 
 # Or using the virtual environment Python directly
-.venv\Scripts\python.exe cli.py
+.venv\Scripts\python.exe agent_os.py
 ```
 
 ### Running the Application
 
-**CLI Mode**:
+**Start AgentOS Server**:
 ```bash
-uv run cli.py
+uv run agent_os.py
 # or
-.venv\Scripts\python.exe cli.py
+.venv\Scripts\python.exe agent_os.py
 ```
 
-**MCP Server**:
-```bash
-uv run src/mcp/server.py
-# or
-.venv\Scripts\python.exe src/mcp/server.py
-```
+**Access the Application**:
+- Web UI: `http://localhost:7777`
+- API docs: `http://localhost:7777/docs`
+- Primary API endpoint: `POST http://localhost:7777/agents/sql-assistant/runs`
 
-**Test Agent Directly**:
+**Test Agent Directly** (for debugging):
 ```bash
 uv run src/agent/sql_agent.py
 # Runs a test query: "Show me all available tables in the database"
@@ -157,7 +164,7 @@ mssql+pyodbc://{host}/{database}?driver=ODBC+Driver+17+for+SQL+Server&trusted_co
 
 ### Agno Agent Instructions
 
-The agent is configured with specific instructions in `sql_agent.py:76-82`:
+The agent is configured with specific instructions in `sql_agent.py:129-135`:
 - Expert SQL Server analyst persona
 - Must explain queries before execution
 - Use LIMIT/TOP for large datasets
@@ -166,11 +173,11 @@ The agent is configured with specific instructions in `sql_agent.py:76-82`:
 
 ### Path Resolution
 
-Both `sql_agent.py` and `server.py` include path manipulation to ensure proper imports:
+`sql_agent.py` includes path manipulation to ensure proper imports:
 ```python
 sys.path.append(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
 ```
-This allows running scripts from their directories while maintaining package structure.
+This allows running the script directly while maintaining the package structure.
 
 ### Logging
 
@@ -180,19 +187,61 @@ from agno.utils.log import logger
 ```
 Logging level set to INFO via `logging.basicConfig(level=logging.INFO)`
 
-### Response Streaming
+### Azure Token Management
 
-Agent is configured with `stream=True` for better responsiveness during long-running queries. CLI uses `agent.print_response()` which handles streaming automatically. MCP server uses `stream=False` in `agent.run()` to return complete responses via HTTP.
+Azure AD tokens expire after 1 hour. The current implementation:
+- Fetches a new token at agent creation via `get_access_token()` (sql_agent.py:21-44)
+- AgentOS creates the agent once at startup
+- For production Azure deployments, restart the server every ~55 minutes
+- Alternative: Use OpenAI provider which has no token expiry
 
-### Automatic Token Refresh
+### Session Management
 
-`SQLAgentManager` class (`sql_agent.py:82-158`) wraps the agent and handles Azure AD token refresh:
-- Tracks token expiry time (1 hour from creation)
-- Checks token before each query via `_refresh_if_needed()`
-- Refreshes 5 minutes before expiry
-- Recreates agent with fresh token automatically
-- Only active for Azure provider (OpenAI doesn't need token refresh)
-- `sql_agent()` function returns `SQLAgentManager` instance for transparent token management
+AgentOS handles multi-user conversation sessions automatically:
+- Each user has unique `user_id` (provided per API request)
+- Each conversation has unique `session_id` (provided per API request)
+- Sessions stored in SQLite database (`agno_sessions.db`)
+- Last 10 message exchanges included in context automatically
+- Users can ask follow-up questions referencing previous queries
+- Sessions isolated per user - no data leakage between users
+- Datetime automatically added to context for time-aware queries
+
+### AgentOS API Usage
+
+**Run Agent with Natural Language Query**:
+```bash
+curl -X POST 'http://localhost:7777/agents/sql-assistant/runs' \
+  -H 'Content-Type: application/x-www-form-urlencoded' \
+  -d 'message=Show me all tables in the database' \
+  -d 'user_id=john' \
+  -d 'session_id=john_session_1' \
+  -d 'stream=false'
+```
+
+**With Authentication** (if `OS_SECURITY_KEY` is set):
+```bash
+curl -X POST 'http://localhost:7777/agents/sql-assistant/runs' \
+  -H 'Content-Type: application/x-www-form-urlencoded' \
+  -H 'Authorization: Bearer YOUR_SECURITY_KEY' \
+  -d 'message=Analyze sales data' \
+  -d 'user_id=mary' \
+  -d 'session_id=mary_session_1'
+```
+
+**Follow-up Query** (use same session_id):
+```bash
+curl -X POST 'http://localhost:7777/agents/sql-assistant/runs' \
+  -H 'Content-Type: application/x-www-form-urlencoded' \
+  -d 'message=What about last month?' \
+  -d 'user_id=john' \
+  -d 'session_id=john_session_1'
+```
+
+**Additional AgentOS Endpoints**:
+- View all sessions: `GET /sessions`
+- View session history: `GET /sessions/{session_id}`
+- Manage memories: `GET/POST /memories`
+- Full API documentation: `http://localhost:7777/docs`
 
 ## Deployment Considerations
 
@@ -202,10 +251,16 @@ WSL Development → Organization:
 1. Change `MODEL_PROVIDER=openai` to `MODEL_PROVIDER=azure` in `.env`
 2. Set Azure credentials: `AZURE_CLIENT_ID`, `AZURE_CLIENT_SECRET`
 3. Set Azure config: `AZURE_PROJECT_ID`, `AZURE_DEPLOYMENT`, `AZURE_ENDPOINT`
-4. Agent will automatically handle token refresh every hour
+4. **Important**: Restart AgentOS server every ~55 minutes to refresh Azure tokens
+
+**Azure Token Expiry Handling**:
+- Azure AD tokens expire after 1 hour
+- AgentOS creates the agent once at startup with a fresh token
+- For production: Use container orchestrator (Docker/Kubernetes) with health checks to restart every ~55 minutes
+- Alternative: Use OpenAI provider (no token expiry) for production
 
 **Adding New Model Providers**:
-1. Add new provider logic in `get_model()` function (`sql_agent.py:30-62`)
+1. Add new provider logic in `get_model()` function (`sql_agent.py:47-79`)
 2. Add new elif block for the provider
 3. Configure environment variables in `.env`
 4. Update `MODEL_PROVIDER` to use the new provider
@@ -213,5 +268,6 @@ WSL Development → Organization:
 **Security**:
 - Never commit `.env` file (should be in `.gitignore`)
 - Agent is read-only by design, but validate user permissions at database level
-- MCP server runs on `0.0.0.0` - restrict access in production environments
+- AgentOS server runs on `0.0.0.0` - restrict access in production environments
 - Azure AD token in `get_access_token()` is critical for organization deployment
+- Use `OS_SECURITY_KEY` for API bearer-token authentication in production

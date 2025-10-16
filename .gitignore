@@ -11,3 +11,6 @@ wheels/
 .env
 /.venv/
 .vscode/PythonImportHelper-v2-Completion.json
+agno_sessions.db
+.claude/
+.vscode/
